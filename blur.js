@@ -1,6 +1,9 @@
 /** @type {HTMLCanvasElement} */
-var canvasWidth = 800
-var canvasHeight = 600
+// var canvasWidth = 800
+// var canvasHeight = 600
+// 适应移动端
+var canvasWidth = window.innerWidth
+var canvasHeight = window.innerHeight
 var canvas = document.getElementById('canvas')
 var context = canvas.getContext('2d')
 canvas.width = canvasWidth
@@ -10,13 +13,24 @@ var image = new Image()
 var radius = 50
 // 定义剪裁区域为圆形，x,y,及半径
 var clippingRegion = { x: 400, y: 200, r: radius }
+var leftMargin = 0, topMargin = 0
 image.src = 'a3c.jpg'
 image.onload = function (e) {
+    // // 适应移动端
+    $('#blur-div').css("width", canvasWidth + "px")
+    $('#blur-div').css("height", canvasHeight + "px")
+    $('#blur-image').css("width", image.width + "px")
+    $('#blur-image').css("height", image.height + "px")
+    leftMargin = (image.width - canvas.width) / 2
+    topMargin = (image.height - canvas.height) / 2
+    // 适应移动端
+    $('#blur-image').css("top", "-" + topMargin + 'px')
+    $('#blur-image').css("left", "-" + leftMargin + 'px')
     initCanvas()
 }
 // 把image图像绘制在canvas
 function initCanvas () {
-    // 0到700 加50 ， 0到500 加50
+    // // 0到700 加50 ， 0到500 加50
     clippingRegion = { x: Math.random() * (canvas.width - 2 * radius) + radius, y: Math.random() * (canvas.height - 2 * radius) + radius, r: radius }
     draw(image, clippingRegion)
 }
@@ -37,12 +51,17 @@ function draw (image, clippingRegion) {
     context.save()
     setClippingRegion(clippingRegion)
     // 绘制在左上角的位置
-    context.drawImage(image, 0, 0)
+    // context.drawImage(image, 0, 0)
+    // 适应移动端
+    //  原点  x，y, image,leftMargin,topMargin, canvas.width,canvas.height,
+    //  原点  x，y, 0,0,canvas.width,canvas.height
+    context.drawImage(image, leftMargin, topMargin, canvas.width, canvas.height,
+        0, 0, canvas.width, canvas.height)
     // 每次结束后进行一次canvas状态的恢复 
     context.restore()
 }
 
-// 重置图像 
+// 重置图像     
 function reset () {
     initCanvas()
 }
