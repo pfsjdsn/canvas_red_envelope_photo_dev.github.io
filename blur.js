@@ -49,6 +49,20 @@ function reset () {
 // 显示清晰图像
 function show () {
     // 原理：只要让剪裁区域够大就可，600x800，大于800就行
-    clippingRegion.r = 1000
-    draw(image, clippingRegion)
+    // clippingRegion.r = 1000
+    // draw(image, clippingRegion)
+    // 开启动画
+    var theAnimation = setInterval(
+        function () {
+            console.log('Animation');
+            clippingRegion.r += 20
+            // 取canvas中宽和高的最大值
+            if (clippingRegion.r > 1000) {
+                // 清除动画
+                clearInterval(theAnimation)
+            }
+            draw(image, clippingRegion)
+        },
+        30
+    );
 }
