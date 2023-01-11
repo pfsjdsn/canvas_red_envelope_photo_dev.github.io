@@ -24,14 +24,20 @@ image.onload = function (e) {
     leftMargin = (image.width - canvas.width) / 2
     topMargin = (image.height - canvas.height) / 2
     // 适应移动端
-    $('#blur-image').css("top", "-" + topMargin + 'px')
-    $('#blur-image').css("left", "-" + leftMargin + 'px')
+    $('#blur-image').css("top", String(-topMargin) + 'px')
+    $('#blur-image').css("left", String(-leftMargin) + 'px')
     initCanvas()
 }
 // 把image图像绘制在canvas
 function initCanvas () {
+    var theleft = leftMargin < 0 ? -leftMargin : 0
+    var thetop = topMargin < 0 ? -topMargin : 0
+    // 确定剪裁区域是在有图像的区域
     // // 0到700 加50 ， 0到500 加50
-    clippingRegion = { x: Math.random() * (canvas.width - 2 * radius) + radius, y: Math.random() * (canvas.height - 2 * radius) + radius, r: radius }
+    clippingRegion = {
+        x: Math.random() * (canvas.width - 2 * radius - 2 * theleft) + radius + theleft,
+        y: Math.random() * (canvas.height - 2 * radius - 2 * thetop) + radius + thetop, r: radius
+    }
     draw(image, clippingRegion)
 }
 // 设置剪裁区域
@@ -55,8 +61,15 @@ function draw (image, clippingRegion) {
     // 适应移动端
     //  原点  x，y, image,leftMargin,topMargin, canvas.width,canvas.height,
     //  原点  x，y, 0,0,canvas.width,canvas.height
-    context.drawImage(image, leftMargin, topMargin, canvas.width, canvas.height,
-        0, 0, canvas.width, canvas.height)
+    // context.drawImage(image, leftMargin, topMargin, canvas.width, canvas.height,
+    //     0, 0, canvas.width, canvas.height)
+    context.drawImage(image,
+        // 与0相比较，取最大的
+        Math.max(leftMargin, 0), Math.max(0, topMargin),
+        // 与image.width比较，取最小
+        Math.min(canvas.width, image.width), Math.min(canvas.height, image.height),
+        leftMargin < 0 ? -leftMargin : 0, topMargin < 0 ? -topMargin : 0,
+        Math.min(canvas.width, image.width), Math.min(canvas.height, image.height))
     // 每次结束后进行一次canvas状态的恢复 
     context.restore()
 }
@@ -85,3 +98,7 @@ function show () {
         30
     );
 }
+// 禁止滑动
+canvas.addEventListener("touchstart", function (e) {
+    e.preventDefault()
+})
