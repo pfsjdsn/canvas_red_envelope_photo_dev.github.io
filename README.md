@@ -1,2 +1,2 @@
 # canvas_red_envelope_photo_dev
-Canvas红包照片开发
+Canvas图像模糊/展示效果开发
